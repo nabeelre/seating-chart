@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#ffffff" />
+  <title>Find Your Seat</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app">
+    <!-- Landing / search view -->
+    <section id="search-view" class="view">
+      <div class="logo" aria-hidden="true">
+        <!-- Temporary placeholder logo -->
+        <span class="logo-mark">&#9829;</span>
+        <span class="logo-text">Our Wedding</span>
+      </div>
+
+      <h1 class="headline">Find your seat</h1>
+      <p class="subhead">Type your name to find your table.</p>
+
+      <form id="search-form" autocomplete="off">
+        <input
+          id="search-input"
+          type="text"
+          inputmode="text"
+          placeholder="Enter your name"
+          aria-label="Enter your name"
+        />
+      </form>
+
+      <ul id="results" class="results" aria-live="polite"></ul>
+      <p id="empty-msg" class="empty-msg" hidden>No matches. Try just your first or last name.</p>
+    </section>
+
+    <!-- Result / floorplan view -->
+    <section id="result-view" class="view" hidden>
+      <button id="back-btn" class="back-btn" type="button">&larr; Search again</button>
+
+      <div class="result-header">
+        <p id="result-name" class="result-name"></p>
+        <div class="table-badge">
+          <span class="table-badge-label">Table</span>
+          <span id="table-number" class="table-badge-number"></span>
+        </div>
+
+        <div id="diet-note" class="diet-note" hidden>
+          <span class="diet-note-tag">You're noted as <strong id="diet-label"></strong></span>
+          <span id="diet-desc" class="diet-note-desc"></span>
+        </div>
+      </div>
+
+      <div class="floorplan-wrap">
+        <svg id="floorplan" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Floorplan"></svg>
+      </div>
+    </section>
+
+    <p id="load-error" class="load-error" hidden>Couldn't load seating data. Please refresh.</p>
+  </main>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
