@@ -20,7 +20,7 @@ html, body { margin: 0; padding: 0; }
   --plan-fill-soft: rgba(28,69,60,.08);
   --t-inactive-fill: rgba(28,69,60,.06);
   --t-inactive-stroke: rgba(28,69,60,.32);
-  --t-inactive-num: rgba(28,69,60,.6);
+  --t-inactive-num: rgba(28,69,60,.92);
   --active-num: #16352e;
   --back-border: rgba(212,173,98,.4);
   --diet-bg: rgba(212,173,98,.16);
@@ -44,7 +44,7 @@ html, body { margin: 0; padding: 0; }
   --plan-fill-soft: rgba(34,70,61,.07);
   --t-inactive-fill: rgba(34,70,61,.05);
   --t-inactive-stroke: rgba(34,70,61,.28);
-  --t-inactive-num: rgba(34,70,61,.55);
+  --t-inactive-num: rgba(34,70,61,.92);
   --active-num: #fbf8f0;
   --back-border: rgba(34,70,61,.22);
   --diet-bg: rgba(176,138,62,.12);
@@ -98,17 +98,17 @@ html, body { margin: 0; padding: 0; }
   padding: 54px 30px 40px;
   text-align: center;
 }
-.couple-line { margin-bottom: 30px; }
+.couple-line { margin-bottom: 30px; text-transform: none; font-size: 14px; letter-spacing: .12em; }
 
 .logo-landing {
-  width: 158px;
+  width: 250px;
   height: auto;
   filter: drop-shadow(0 6px 20px rgba(0,0,0,.18));
 }
 
 .title {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 33px;
+  font-size: 38px;
   line-height: 1.12;
   font-weight: 500;
   color: var(--ink);
@@ -117,7 +117,7 @@ html, body { margin: 0; padding: 0; }
 }
 .subtitle {
   font-family: 'Jost', sans-serif;
-  font-size: 13.5px;
+  font-size: 15px;
   line-height: 1.6;
   color: var(--soft);
   margin: 11px 0 0;
@@ -210,12 +210,15 @@ html, body { margin: 0; padding: 0; }
 }
 
 /* ============ RESULT ============ */
+.result {
+  max-width: 500px;
+}
 .result-inner {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 42px 26px 36px;
+  padding: 42px 10px 36px;
   text-align: center;
 }
 .logo-result {
@@ -255,7 +258,7 @@ html, body { margin: 0; padding: 0; }
   font-size: 84px;
   line-height: .92;
   color: var(--gold);
-  margin-top: 6px;
+  margin-top: -8px;
   letter-spacing: .01em;
 }
 .table-label {
@@ -271,12 +274,12 @@ html, body { margin: 0; padding: 0; }
 /* Floorplan card */
 .map-card {
   width: 100%;
-  max-width: 362px;
+  max-width: 480px;
   margin-top: 28px;
   background: var(--map-bg);
   border: 1px solid var(--map-border);
   border-radius: 18px;
-  padding: 16px 14px 14px;
+  padding: 14px 8px 10px;
   box-shadow: 0 14px 36px rgba(0,0,0,.18);
 }
 .map-header {
@@ -397,3 +400,115 @@ html, body { margin: 0; padding: 0; }
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; }
 }
+
+/* ============ FLOORPLAN EDITOR (?edit) ============ */
+.editor-view {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: #f4efe6;
+  z-index: 100;
+}
+.editor-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #16352e;
+  color: #f4efe6;
+}
+.ed-title { font-family: 'Cormorant Garamond', serif; font-size: 18px; margin-right: 8px; }
+.ed-btn {
+  font-family: 'Jost', sans-serif;
+  font-size: 12px;
+  letter-spacing: .04em;
+  padding: 7px 13px;
+  border: 1px solid rgba(244,239,230,.4);
+  border-radius: 7px;
+  background: transparent;
+  color: #f4efe6;
+  cursor: pointer;
+}
+.ed-btn:hover { background: rgba(244,239,230,.12); }
+.ed-btn-primary { background: #c89b3c; border-color: #c89b3c; color: #16352e; font-weight: 600; }
+.ed-info {
+  font-family: 'Jost', sans-serif;
+  font-size: 12px;
+  opacity: .85;
+  margin-left: auto;
+}
+.editor-stage {
+  flex: 1;
+  min-height: 0;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.editor-hint {
+  padding: 8px 14px;
+  font-family: 'Jost', sans-serif;
+  font-size: 11.5px;
+  color: #6c655a;
+  background: #e8e0d2;
+  text-align: center;
+}
+.ed-svg {
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  touch-action: none;
+  background: #fbf8f1;
+  border: 1px solid #d9cfbd;
+  border-radius: 10px;
+}
+.ed-bg { fill: transparent; pointer-events: none; }
+/* visiblePainted: outline-only shapes (walls) are grabbed by their stroke, so
+   clicks in empty room area fall through to deselect instead of hitting the wall. */
+.ed-target { cursor: move; pointer-events: visiblePainted; }
+.ed-svg text.ed-target { pointer-events: all; }
+.ed-target:hover { opacity: .85; }
+.ed-hit { stroke: transparent; stroke-width: 14px; cursor: move; pointer-events: stroke; }
+.ed-nohit { pointer-events: none; }
+.ed-bbox { fill: none; stroke: #c89b3c; stroke-width: 1; stroke-dasharray: 5 4; pointer-events: none; opacity: .8; }
+.ed-handle { fill: #fff; stroke: #c89b3c; stroke-width: 1.6; cursor: nwse-resize; }
+
+/* Editor reuses .t-shape / .t-num tokens; ensure they're visible on the light stage */
+.ed-svg .t-shape { fill: var(--t-inactive-fill); stroke: var(--t-inactive-stroke); }
+.ed-svg .t-num { fill: var(--t-inactive-num); }
+
+.ed-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(22,53,46,.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 20px;
+}
+.ed-modal-box {
+  background: #fbf8f1;
+  border-radius: 12px;
+  padding: 18px;
+  width: 100%;
+  max-width: 640px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.3);
+}
+.ed-modal-box p { font-family: 'Jost', sans-serif; font-size: 13px; margin: 0 0 10px; color: #3a3a33; }
+.ed-modal-box code { background: #e8e0d2; padding: 1px 5px; border-radius: 4px; }
+.ed-modal-box textarea {
+  width: 100%;
+  height: 300px;
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 12px;
+  border: 1px solid #d9cfbd;
+  border-radius: 8px;
+  padding: 10px;
+  resize: vertical;
+  box-sizing: border-box;
+}
+.ed-modal-actions { display: flex; justify-content: flex-end; margin-top: 10px; }
+.ed-modal-actions .ed-btn { background: #16352e; }
