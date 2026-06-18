@@ -289,6 +289,7 @@ var STATIC_GEO = [
   var suggestBox = document.getElementById("suggest-box");
   var firstNameEl = document.getElementById("first-name");
   var tableNumberEl = document.getElementById("table-number");
+  var dietaryNoteEl = document.getElementById("dietary-note");
   var floorplan = document.getElementById("floorplan");
   var backBtn = document.getElementById("back-btn");
   var loadError = document.getElementById("load-error");
@@ -367,13 +368,21 @@ var STATIC_GEO = [
     }
   }
 
-  // Select a suggestion. On iOS, tapping a row collapses the keyboard and
-  // reflows the page, which moves the row out from under the finger and makes
-  // Safari cancel the synthesized "click" — so handle "touchend" directly and
-  // suppress the duplicate click, while keeping "click" for desktop/mouse.
+  // Select a suggestion. The suggest-box is absolutely positioned relative to
+  // the input, so on iOS tapping a row blurs the input -> the keyboard
+  // dismisses -> the viewport grows and the page reflows mid-touch. Safari
+  // reads that layout shift as a scroll and fires "touchcancel" (and cancels
+  // the synthesized click), so the tap never selects.
+  //
+  // Fix: preventDefault on the press so the input keeps focus and the keyboard
+  // stays put (no reflow). We then run the selection on touchend/click and
+  // dismiss the keyboard ourselves from inside selectGuest.
   function bindRowSelect(row, g) {
     var moved = false;
-    row.addEventListener("touchstart", function () { moved = false; }, { passive: true });
+    row.addEventListener("touchstart", function (e) {
+      moved = false;
+      e.preventDefault();         // keep input focus -> no keyboard dismiss/reflow
+    }, { passive: false });
     row.addEventListener("touchmove", function () { moved = true; }, { passive: true });
     row.addEventListener("touchend", function (e) {
       if (moved) return;          // a scroll, not a tap
@@ -507,9 +516,12 @@ var STATIC_GEO = [
   function selectGuest(g) {
     firstNameEl.textContent = g.first;
     tableNumberEl.textContent = g.table;
+    // Placeholder until real dietary data is populated in data.js.
+    dietaryNoteEl.textContent = g.dietary ? g.dietary : "No dietary restrictions on file";
     drawFloorplan(g.table);
 
     input.value = "";
+    input.blur();               // dismiss the keyboard we kept open for the tap
     suggestBox.hidden = true;
     suggestBox.innerHTML = "";
 

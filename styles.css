@@ -256,9 +256,9 @@ html, body { margin: 0; padding: 0; }
   font-family: 'Cormorant Garamond', serif;
   font-weight: 600;
   font-size: 84px;
-  line-height: .92;
+  line-height: 1;
   color: var(--gold);
-  margin-top: -8px;
+  margin: 10px 0;
   letter-spacing: .01em;
 }
 .table-label {
@@ -267,7 +267,6 @@ html, body { margin: 0; padding: 0; }
   letter-spacing: .36em;
   text-transform: uppercase;
   color: var(--ink);
-  margin-top: 2px;
   font-weight: 400;
 }
 
@@ -321,31 +320,31 @@ html, body { margin: 0; padding: 0; }
 }
 .t-num.is-active { fill: var(--active-num); }
 
-/* Meal */
-.meal-block {
-  margin-top: 22px;
+/* Dietary note (inside the map card, below the floorplan) */
+.diet-block {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
 }
-.eyebrow-meal { font-size: 9.5px; opacity: .85; }
-.meal-name {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 21px;
-  font-weight: 500;
-  color: var(--ink);
-}
-.dietary-pill {
+.diet-block .hairline-sm { width: 40px; }
+.diet-eyebrow {
   font-family: 'Jost', sans-serif;
-  font-size: 10.5px;
-  letter-spacing: .18em;
+  font-size: 9.5px;
+  letter-spacing: .32em;
   text-transform: uppercase;
-  color: var(--diet-ink);
-  background: var(--diet-bg);
-  padding: 5px 13px;
-  border-radius: 20px;
-  margin-top: 2px;
+  color: var(--plan-ink);
+  opacity: .75;
+}
+.dietary-note {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 17px;
+  line-height: 1.4;
+  color: var(--plan-ink);
+  text-align: center;
 }
 
 .back-btn {
