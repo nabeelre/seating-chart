@@ -516,10 +516,17 @@ var STATIC_GEO = [
   function selectGuest(g) {
     firstNameEl.textContent = g.first;
     tableNumberEl.textContent = g.table;
-    // Placeholder until real dietary data is populated in data.js.
-    if (g.dietary === "Vegetarian") {
+    // Match dietary keywords case-insensitively so data.js can use any casing.
+    var diet = (g.dietary || "").trim().toLowerCase();
+    if (diet === "vegetarian") {
       dietaryNoteEl.textContent =
         "You will be served an individually plated vegetarian entree in place of the shared meat entrees.";
+    } else if (diet === "gluten-free") {
+      dietaryNoteEl.textContent =
+        "Please see the menu for a list of dishes which are gluten-free.";
+    } else if (diet === "no-chocolate") {
+      dietaryNoteEl.textContent =
+        "You are not allowed to eat chocolate because it makes you too hyper.";
     } else {
       dietaryNoteEl.textContent = g.dietary ? g.dietary : "No dietary restrictions on file";
     }
