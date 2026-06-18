@@ -25,6 +25,8 @@ html, body { margin: 0; padding: 0; }
   --back-border: rgba(212,173,98,.4);
   --diet-bg: rgba(212,173,98,.16);
   --diet-ink: #e7c884;
+  --glow-warm: rgba(212,173,98,.46);
+  --glow-cool: rgba(74,140,120,.66);
 }
 .theme-grove {
   --bg: linear-gradient(170deg, #f7f3e8 0%, #efe9d8 100%);
@@ -49,6 +51,8 @@ html, body { margin: 0; padding: 0; }
   --back-border: rgba(34,70,61,.22);
   --diet-bg: rgba(176,138,62,.12);
   --diet-ink: #8a6a2c;
+  --glow-warm: rgba(176,138,62,.40);
+  --glow-cool: rgba(91,122,92,.42);
 }
 
 /* ============ APP SHELL ============ */
@@ -60,8 +64,28 @@ html, body { margin: 0; padding: 0; }
   font-family: 'Jost', sans-serif;
   overflow: hidden;
 }
+
+/* Animated mesh background: three soft radial glows that slowly breathe. */
+@keyframes scMesh {
+  0%, 100% { opacity: .68; transform: scale(1); }
+  50%      { opacity: 1;   transform: scale(1.05); }
+}
+.mesh {
+  position: absolute;
+  inset: -12%;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(46% 42% at 18% 20%, var(--glow-warm) 0%, transparent 66%),
+    radial-gradient(52% 48% at 84% 26%, var(--glow-cool) 0%, transparent 68%),
+    radial-gradient(58% 54% at 50% 92%, var(--glow-warm) 0%, transparent 66%);
+  animation: scMesh 13s ease-in-out infinite;
+}
+
 /* Center within a phone-width column on larger screens */
 .screen {
+  position: relative;
+  z-index: 1;
   max-width: 430px;
   margin: 0 auto;
 }
