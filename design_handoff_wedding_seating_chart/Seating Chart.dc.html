@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    .sc-input::placeholder { color: var(--sc-faint); opacity: 1; }
+    .sc-input:focus { outline: none; }
+    @keyframes scFadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+    @keyframes scFadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes scPop { 0% { opacity: 0; transform: scale(.62); } 58% { opacity: 1; transform: scale(1.06); } 100% { opacity: 1; transform: scale(1); } }
+    @keyframes scRing { 0% { transform: scale(.55); opacity: .85; } 70% { opacity: 0; } 100% { transform: scale(1.7); opacity: 0; } }
+    @keyframes scGlow { 0%, 100% { opacity: .3; } 50% { opacity: .8; } }
+    @keyframes scDot { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    .sc-ringPulse, .sc-activeDot { transform-box: fill-box; transform-origin: center; }
+    /* Refined motion */
+    [data-motion="refined"] .sc-reveal { animation: scFadeUp .7s cubic-bezier(.22,.61,.36,1) both; }
+    [data-motion="refined"] .sc-num { animation: scFadeUp .8s .05s cubic-bezier(.22,.61,.36,1) both; }
+    [data-motion="refined"] .sc-ringPulse { animation: scGlow 2.6s ease-in-out infinite; }
+    [data-motion="refined"] .sc-activeDot { animation: scPop .6s .15s cubic-bezier(.34,1.4,.5,1) both; }
+    /* Delight motion */
+    [data-motion="delight"] .sc-reveal { animation: scFadeUp .65s cubic-bezier(.22,.61,.36,1) both; }
+    [data-motion="delight"] .sc-num { animation: scPop .85s .18s cubic-bezier(.34,1.5,.5,1) both; }
+    [data-motion="delight"] .sc-ringPulse { transform-box: fill-box; transform-origin: center; animation: scRing 2.1s .3s ease-out infinite; }
+    [data-motion="delight"] .sc-activeDot { animation: scPop .7s .25s cubic-bezier(.34,1.55,.5,1) both; }
+    [data-motion="delight"] .sc-r1 { animation: scFadeUp .6s .04s cubic-bezier(.22,.61,.36,1) both; }
+    [data-motion="delight"] .sc-r2 { animation: scFadeUp .6s .12s cubic-bezier(.22,.61,.36,1) both; }
+    [data-motion="delight"] .sc-r3 { animation: scFadeUp .6s .22s cubic-bezier(.22,.61,.36,1) both; }
+    [data-motion="delight"] .sc-r4 { animation: scFadeUp .6s .34s cubic-bezier(.22,.61,.36,1) both; }
+    .sc-sugg:active { transform: scale(.985); }
+  </style>
+</helmet>
+
+<div data-screen-label="Seating Chart App" data-motion="{{ motion }}" style="{{ rootStyle }}">
+
+  <!-- ============ LANDING ============ -->
+  <sc-if value="{{ isLanding }}" hint-placeholder-val="{{ true }}">
+    <div class="sc-reveal" style="min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:54px 30px 40px;text-align:center;">
+
+      <div style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.42em;text-transform:uppercase;color:{{ gold }};font-weight:400;margin-bottom:30px;">{{ coupleLine }}</div>
+
+      <img src="assets/AN-monogram.png" alt="Asra &amp; Nabeel monogram" style="{{ logoStyle }}" />
+
+      <div style="font-family:'Cormorant Garamond',serif;font-size:33px;line-height:1.12;font-weight:500;color:{{ ink }};margin-top:26px;letter-spacing:.01em;">Find Your Seat</div>
+      <div style="font-family:'Jost',sans-serif;font-size:13.5px;line-height:1.6;color:{{ soft }};margin-top:11px;max-width:268px;font-weight:300;">Enter your name and we'll guide you to your table for the evening.</div>
+
+      <div style="position:relative;width:100%;max-width:330px;margin-top:30px;">
+        <input class="sc-input" type="text" value="{{ query }}" onInput="{{ onInput }}" placeholder="Your name" autocomplete="off" autocorrect="off" spellcheck="false" style="{{ inputStyle }}" />
+
+        <sc-if value="{{ showSuggestions }}" hint-placeholder-val="{{ false }}">
+          <div style="{{ suggestBoxStyle }}">
+            <sc-for list="{{ suggestions }}" as="g" hint-placeholder-count="0">
+              <div class="sc-sugg" onClick="{{ g.select }}" style="{{ g.rowStyle }}">
+                <span style="font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:500;color:{{ ink }};">{{ g.name }}</span>
+                <span style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:{{ gold }};">Table {{ g.table }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ showNoMatch }}" hint-placeholder-val="{{ false }}">
+          <div style="{{ suggestBoxStyle }}">
+            <div style="padding:18px 20px;font-family:'Jost',sans-serif;font-size:13px;color:{{ soft }};text-align:center;font-weight:300;">No match yet — try your last name.</div>
+          </div>
+        </sc-if>
+      </div>
+
+      <div style="flex:1;"></div>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:38px;color:{{ gold }};opacity:.7;">
+        <span style="width:26px;height:1px;background:{{ gold }};display:block;"></span>
+        <span style="font-family:'Jost',sans-serif;font-size:10px;letter-spacing:.34em;text-transform:uppercase;">The Oakville Grill &amp; Cellar</span>
+        <span style="width:26px;height:1px;background:{{ gold }};display:block;"></span>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ============ RESULT ============ -->
+  <sc-if value="{{ isResult }}" hint-placeholder-val="{{ false }}">
+    <div style="min-height:100%;display:flex;flex-direction:column;align-items:center;padding:42px 26px 36px;text-align:center;">
+
+      <img src="assets/AN-monogram.png" alt="monogram" class="sc-r1" style="width:104px;height:auto;opacity:.95;margin-bottom:18px;" />
+
+      <div class="sc-r1" style="font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:{{ gold }};font-weight:400;">Welcome</div>
+      <div class="sc-reveal" style="font-family:'Cormorant Garamond',serif;font-size:38px;line-height:1.08;font-weight:600;color:{{ ink }};margin-top:7px;">{{ firstName }}</div>
+      <div class="sc-r2" style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16.5px;line-height:1.5;color:{{ soft }};margin-top:12px;max-width:280px;">We're so glad you're here to celebrate with us. Your place is waiting.</div>
+
+      <div class="sc-num" style="margin-top:26px;display:flex;flex-direction:column;align-items:center;">
+        <div style="font-family:'Jost',sans-serif;font-size:10.5px;letter-spacing:.42em;text-transform:uppercase;color:{{ gold }};">You're seated at</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:84px;line-height:.92;color:{{ gold }};margin-top:6px;letter-spacing:.01em;">{{ tableNumber }}</div>
+        <div style="font-family:'Jost',sans-serif;font-size:13px;letter-spacing:.36em;text-transform:uppercase;color:{{ ink }};margin-top:2px;font-weight:400;">Table</div>
+      </div>
+
+      <!-- Floorplan -->
+      <div class="sc-r3" style="{{ mapCardStyle }}">
+        <div style="display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:12px;">
+          <span style="width:18px;height:1px;background:{{ gold }};opacity:.55;display:block;"></span>
+          <span style="font-family:'Jost',sans-serif;font-size:9.5px;letter-spacing:.32em;text-transform:uppercase;color:{{ planInk }};opacity:.75;">The Dining Room</span>
+          <span style="width:18px;height:1px;background:{{ gold }};opacity:.55;display:block;"></span>
+        </div>
+        <svg viewBox="0 0 792 436" width="100%" style="display:block;">
+          <!-- outer wall -->
+          <rect x="12" y="28" width="768" height="392" rx="14" fill="none" stroke="{{ planLine }}" stroke-width="2"></rect>
+          <!-- compass -->
+          <text x="410" y="46" text-anchor="middle" font-family="Jost, sans-serif" font-size="11" letter-spacing="5" fill="{{ planInk }}" opacity=".5">N O R T H</text>
+          <!-- veranda boundary -->
+          <line x1="300" y1="40" x2="300" y2="322" stroke="{{ planLine }}" stroke-dasharray="4 6" stroke-width="1.4" opacity=".7"></line>
+          <line x1="300" y1="118" x2="772" y2="118" stroke="{{ planLine }}" stroke-dasharray="4 6" stroke-width="1.4" opacity=".7"></line>
+          <text x="545" y="86" text-anchor="middle" font-family="Jost, sans-serif" font-size="11" letter-spacing="3" fill="{{ planInk }}" opacity=".55">VERANDA · OUTDOORS</text>
+          <circle cx="332" cy="64" r="13" fill="none" stroke="{{ planLine }}" stroke-width="1.3" opacity=".55"></circle>
+          <circle cx="382" cy="64" r="13" fill="none" stroke="{{ planLine }}" stroke-width="1.3" opacity=".55"></circle>
+          <circle cx="432" cy="64" r="13" fill="none" stroke="{{ planLine }}" stroke-width="1.3" opacity=".55"></circle>
+          <circle cx="560" cy="62" r="13" fill="none" stroke="{{ planLine }}" stroke-width="1.3" opacity=".55"></circle>
+          <circle cx="610" cy="62" r="13" fill="none" stroke="{{ planLine }}" stroke-width="1.3" opacity=".55"></circle>
+          <circle cx="660" cy="62" r="13" fill="none" stroke="{{ planLine }}" stroke-width="1.3" opacity=".55"></circle>
+          <circle cx="710" cy="62" r="13" fill="none" stroke="{{ planLine }}" stroke-width="1.3" opacity=".55"></circle>
+          <!-- bar -->
+          <rect x="312" y="150" width="84" height="152" rx="8" fill="{{ planFillSoft }}" stroke="{{ planLine }}" stroke-width="1.5"></rect>
+          <rect x="323" y="162" width="62" height="98" rx="4" fill="none" stroke="{{ planLine }}" stroke-width="1.2"></rect>
+          <text x="354" y="290" text-anchor="middle" font-family="Jost, sans-serif" font-size="12" letter-spacing="3" fill="{{ planInk }}" opacity=".6">BAR</text>
+          <!-- stairs -->
+          <text x="398" y="330" text-anchor="middle" font-family="Jost, sans-serif" font-size="10" letter-spacing="2" fill="{{ planInk }}" opacity=".5">STAIRS TO MAIN DINING</text>
+          <rect x="300" y="342" width="198" height="46" rx="4" fill="{{ planFillSoft }}"></rect>
+          <line x1="318" y1="344" x2="318" y2="386" stroke="{{ planLine }}" stroke-width="1" opacity=".5"></line>
+          <line x1="338" y1="344" x2="338" y2="386" stroke="{{ planLine }}" stroke-width="1" opacity=".5"></line>
+          <line x1="358" y1="344" x2="358" y2="386" stroke="{{ planLine }}" stroke-width="1" opacity=".5"></line>
+          <line x1="378" y1="344" x2="378" y2="386" stroke="{{ planLine }}" stroke-width="1" opacity=".5"></line>
+          <line x1="398" y1="344" x2="398" y2="386" stroke="{{ planLine }}" stroke-width="1" opacity=".5"></line>
+          <line x1="418" y1="344" x2="418" y2="386" stroke="{{ planLine }}" stroke-width="1" opacity=".5"></line>
+          <line x1="438" y1="344" x2="438" y2="386" stroke="{{ planLine }}" stroke-width="1" opacity=".5"></line>
+          <line x1="458" y1="344" x2="458" y2="386" stroke="{{ planLine }}" stroke-width="1" opacity=".5"></line>
+          <line x1="478" y1="344" x2="478" y2="386" stroke="{{ planLine }}" stroke-width="1" opacity=".5"></line>
+          <text x="712" y="404" text-anchor="middle" font-family="Jost, sans-serif" font-size="10" letter-spacing="2" fill="{{ planInk }}" opacity=".45">ESTATE ROOM</text>
+
+          <!-- long / rental tables -->
+          <sc-for list="{{ rectTables }}" as="t" hint-placeholder-count="0">
+            <g>
+              <ellipse cx="{{ t.cx }}" cy="{{ t.cy }}" rx="{{ t.spotRx }}" ry="{{ t.spotRy }}" fill="{{ gold }}" opacity="{{ t.spotOpacity }}"></ellipse>
+              <ellipse class="{{ t.ringClass }}" cx="{{ t.cx }}" cy="{{ t.cy }}" rx="{{ t.ringRx }}" ry="{{ t.ringRy }}" fill="none" stroke="{{ gold }}" stroke-width="2.4" opacity="{{ t.ringOpacity }}"></ellipse>
+              <rect class="{{ t.shapeClass }}" x="{{ t.x }}" y="{{ t.y }}" width="{{ t.w }}" height="{{ t.h }}" rx="7" fill="{{ t.fill }}" stroke="{{ t.stroke }}" stroke-width="{{ t.sw }}"></rect>
+              <text x="{{ t.cx }}" y="{{ t.ty }}" text-anchor="middle" font-family="Cormorant Garamond, serif" font-weight="600" font-size="{{ t.fs }}" fill="{{ t.numFill }}">{{ t.n }}</text>
+            </g>
+          </sc-for>
+
+          <!-- round tables -->
+          <sc-for list="{{ roundTables }}" as="t" hint-placeholder-count="0">
+            <g>
+              <circle cx="{{ t.cx }}" cy="{{ t.cy }}" r="46" fill="{{ gold }}" opacity="{{ t.spotOpacity }}"></circle>
+              <circle class="{{ t.ringClass }}" cx="{{ t.cx }}" cy="{{ t.cy }}" r="{{ t.ringR }}" fill="none" stroke="{{ gold }}" stroke-width="2.4" opacity="{{ t.ringOpacity }}"></circle>
+              <circle class="{{ t.shapeClass }}" cx="{{ t.cx }}" cy="{{ t.cy }}" r="{{ t.r }}" fill="{{ t.fill }}" stroke="{{ t.stroke }}" stroke-width="{{ t.sw }}"></circle>
+              <text x="{{ t.cx }}" y="{{ t.ty }}" text-anchor="middle" font-family="Cormorant Garamond, serif" font-weight="600" font-size="{{ t.fs }}" fill="{{ t.numFill }}">{{ t.n }}</text>
+            </g>
+          </sc-for>
+        </svg>
+      </div>
+
+      <!-- meal -->
+      <div class="sc-r4" style="margin-top:22px;display:flex;flex-direction:column;align-items:center;gap:10px;">
+        <div style="font-family:'Jost',sans-serif;font-size:9.5px;letter-spacing:.34em;text-transform:uppercase;color:{{ gold }};opacity:.85;">Your Plated Selection</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:500;color:{{ ink }};">{{ meal }}</div>
+        <sc-if value="{{ hasDietary }}" hint-placeholder-val="{{ false }}">
+          <div style="{{ dietaryStyle }}">{{ dietary }}</div>
+        </sc-if>
+      </div>
+
+      <div style="flex:1;min-height:24px;"></div>
+      <button onClick="{{ back }}" class="sc-r4" style="{{ backStyle }}">Not you? Search again</button>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:844},&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;cellar&quot;,&quot;grove&quot;],&quot;default&quot;:&quot;grove&quot;,&quot;tsType&quot;:&quot;'cellar' | 'grove'&quot;},&quot;motion&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;refined&quot;,&quot;delight&quot;],&quot;default&quot;:&quot;delight&quot;,&quot;tsType&quot;:&quot;'refined' | 'delight'&quot;}}">
+class Component extends DCLogic {
+  state = { screen: 'landing', query: '', selected: null };
+
+  buildGuests() {
+    if (this._guests) return this._guests;
+    const firsts = ["Olivia","Liam","Amara","Noah","Priya","Ethan","Sofia","Arjun","Maya","Lucas","Zara","Mateo","Aaliyah","Henry","Leila","Caleb","Nora","Idris","Elena","Omar","Ruby","Theo","Anika","Julian","Imran","Rohan","Clara","Dev","Isla","Sami","Hana","Felix","Yasmin","Owen","Naomi","Kiran","Stella","Asad","Vera","Jonah"];
+    const lasts = ["Khan","Bennett","Patel","Rivera","Ahmed","Caldwell","Nguyen","Okafor","Romano","Sharma","Whitfield","Castillo","Malik","Donovan","Iyer","Sorensen","Abbas","Greenwood","Costa","Rahman","Fairbanks","Mehta","Larsen","Qureshi","Holloway","Banerjee","Vance","Saleh","Pemberton","Joshi","Hartley","Siddiqui","Marlowe","Reyes","Chaudhry","Ellison","Nasser","Vaughn","Kapoor","Sterling"];
+    const meals = ["Filet & Wild Mushroom","Pan-Seared Branzino","Herb-Roasted Chicken","Garden Risotto"];
+    const out = [];
+    const seen = {};
+    let i = 0, made = 0;
+    while (made < 150 && i < 2000) {
+      const f = firsts[i % firsts.length];
+      const l = lasts[(i * 7 + (i % 5)) % lasts.length];
+      const key = f + " " + l;
+      i++;
+      if (seen[key]) continue;
+      seen[key] = 1;
+      const meal = meals[made % meals.length];
+      let dietary = null;
+      if (meal === "Garden Risotto") dietary = "Vegetarian";
+      else if (made % 13 === 0) dietary = "Gluten-Free";
+      else if (made % 17 === 0) dietary = "No Shellfish";
+      out.push({ first: f, last: l, name: key, table: (made % 16) + 1, meal, dietary });
+      made++;
+    }
+    this._guests = out;
+    return out;
+  }
+
+  // Real venue geometry, traced to a 792x436 plan
+  roundGeo() {
+    return [
+      { n: 16, cx: 138, cy: 80 }, { n: 12, cx: 246, cy: 78 },
+      { n: 10, cx: 461, cy: 139 }, { n: 7, cx: 566, cy: 137 }, { n: 4, cx: 666, cy: 140 },
+      { n: 8, cx: 508, cy: 206 }, { n: 5, cx: 606, cy: 205 }, { n: 3, cx: 708, cy: 212 },
+      { n: 9, cx: 459, cy: 267 }, { n: 6, cx: 558, cy: 274 }, { n: 2, cx: 663, cy: 270 }
+    ];
+  }
+  rectGeo() {
+    return [
+      { n: 15, x: 60, y: 150, w: 30, h: 152 },
+      { n: 14, x: 142, y: 150, w: 30, h: 152 },
+      { n: 11, x: 248, y: 150, w: 30, h: 152 },
+      { n: 13, x: 58, y: 336, w: 110, h: 30 },
+      { n: 1, x: 552, y: 336, w: 110, h: 30 }
+    ];
+  }
+
+  onInput = (e) => this.setState({ query: e.target.value });
+  selectGuest = (g) => this.setState({ screen: 'result', selected: g, query: '' });
+  back = () => this.setState({ screen: 'landing', query: '', selected: null });
+
+  themeVars() {
+    const t = this.props.theme || 'cellar';
+    if (t === 'grove') {
+      return {
+        bg: 'linear-gradient(170deg,#f7f3e8 0%,#efe9d8 100%)',
+        ink: '#22463d', soft: '#5d6f64', faint: '#a7ad9f',
+        gold: '#b08a3e',
+        inputBg: 'rgba(255,255,255,.72)', inputBorder: 'rgba(34,70,61,.18)',
+        suggestBg: '#fffdf7', suggestBorder: 'rgba(34,70,61,.12)', rowLine: 'rgba(34,70,61,.08)',
+        mapBg: '#fbf8f0', mapBorder: 'rgba(176,138,62,.4)',
+        planLine: 'rgba(34,70,61,.22)', planInk: '#22463d', planFillSoft: 'rgba(34,70,61,.07)',
+        planGreen: '#5b7a5c', tInactiveFill: 'rgba(34,70,61,.05)', tInactiveStroke: 'rgba(34,70,61,.28)', tInactiveNum: 'rgba(34,70,61,.55)',
+        backBorder: 'rgba(34,70,61,.22)', dietBg: 'rgba(176,138,62,.12)', dietInk: '#8a6a2c'
+      };
+    }
+    // cellar (default) — deep teal-green
+    return {
+      bg: 'linear-gradient(168deg,#1c453c 0%,#16352e 60%,#122c26 100%)',
+      ink: '#f4eddc', soft: '#bcccc0', faint: '#7f9389',
+      gold: '#d4ad62',
+      inputBg: 'rgba(255,255,255,.06)', inputBorder: 'rgba(212,173,98,.4)',
+      suggestBg: '#1f4a40', suggestBorder: 'rgba(212,173,98,.22)', rowLine: 'rgba(244,237,220,.08)',
+      mapBg: '#f7f1e3', mapBorder: 'rgba(212,173,98,.55)',
+      planLine: 'rgba(28,69,60,.3)', planInk: '#1c453c', planFillSoft: 'rgba(28,69,60,.08)',
+      planGreen: '#4f7257', tInactiveFill: 'rgba(28,69,60,.06)', tInactiveStroke: 'rgba(28,69,60,.32)', tInactiveNum: 'rgba(28,69,60,.6)',
+      backBorder: 'rgba(212,173,98,.4)', dietBg: 'rgba(212,173,98,.16)', dietInk: '#e7c884'
+    };
+  }
+
+  renderVals() {
+    const v = this.themeVars();
+    const motion = this.props.motion || 'refined';
+    const guests = this.buildGuests();
+    const q = (this.state.query || '').trim().toLowerCase();
+    const screen = this.state.screen;
+    const sel = this.state.selected;
+
+    // suggestions: first OR last match; startsWith ranked first
+    let suggestions = [];
+    if (q.length >= 1) {
+      const scored = [];
+      for (const g of guests) {
+        const f = g.first.toLowerCase(), l = g.last.toLowerCase();
+        let rank = -1;
+        if (f.startsWith(q) || l.startsWith(q)) rank = 0;
+        else if (f.includes(q) || l.includes(q)) rank = 1;
+        if (rank >= 0) scored.push({ g, rank });
+      }
+      scored.sort((a, b) => a.rank - b.rank || a.g.name.localeCompare(b.g.name));
+      suggestions = scored.slice(0, 6).map((s, idx, arr) => ({
+        name: s.g.name,
+        table: s.g.table,
+        select: () => this.selectGuest(s.g),
+        rowStyle: `display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 18px;cursor:pointer;border-bottom:${idx < arr.length - 1 ? '1px solid ' + v.rowLine : 'none'};transition:transform .12s ease;`
+      }));
+    }
+    const showSuggestions = q.length >= 1 && suggestions.length > 0 && screen === 'landing';
+    const showNoMatch = q.length >= 2 && suggestions.length === 0 && screen === 'landing';
+
+    // floorplan tables
+    const activeN = sel ? sel.table : -1;
+    const activeNumFill = (this.props.theme === 'grove') ? '#fbf8f0' : '#16352e';
+    const roundTables = this.roundGeo().map((g) => {
+      const active = g.n === activeN;
+      return {
+        n: g.n, cx: g.cx, cy: g.cy,
+        r: active ? 24 : 19,
+        fill: active ? v.gold : v.tInactiveFill,
+        stroke: active ? v.gold : v.tInactiveStroke,
+        sw: active ? 2 : 1.3,
+        numFill: active ? activeNumFill : v.tInactiveNum,
+        fs: active ? 24 : 17,
+        ty: g.cy + (active ? 8.5 : 6),
+        ringR: 31,
+        ringClass: active ? 'sc-ringPulse' : '',
+        shapeClass: active ? 'sc-activeDot' : '',
+        ringOpacity: active ? 1 : 0,
+        spotOpacity: active ? 0.16 : 0
+      };
+    });
+    const rectTables = this.rectGeo().map((g) => {
+      const active = g.n === activeN;
+      const cx = g.x + g.w / 2, cy = g.y + g.h / 2;
+      return {
+        n: g.n, x: g.x, y: g.y, w: g.w, h: g.h, cx, cy,
+        fill: active ? v.gold : v.tInactiveFill,
+        stroke: active ? v.gold : v.tInactiveStroke,
+        sw: active ? 2 : 1.3,
+        numFill: active ? activeNumFill : v.tInactiveNum,
+        fs: active ? 22 : 16,
+        ty: cy + (active ? 8 : 5.5),
+        ringRx: g.w / 2 + 10, ringRy: g.h / 2 + 10,
+        spotRx: g.w / 2 + 26, spotRy: g.h / 2 + 22,
+        ringClass: active ? 'sc-ringPulse' : '',
+        shapeClass: active ? 'sc-activeDot' : '',
+        ringOpacity: active ? 1 : 0,
+        spotOpacity: active ? 0.16 : 0
+      };
+    });
+
+    const dateLine = 'Asra \u00b7 Nabeel \u00b7 06.27.26';
+
+    return {
+      motion,
+      gold: v.gold, ink: v.ink, soft: v.soft, faint: v.faint,
+      planInk: v.planInk, planLine: v.planLine, planFillSoft: v.planFillSoft, planGreen: v.planGreen,
+      logoSrc: 'assets/AN-monogram.png',
+      coupleLine: dateLine,
+      isLanding: screen === 'landing',
+      isResult: screen === 'result',
+      query: this.state.query,
+      onInput: this.onInput,
+      suggestions, showSuggestions, showNoMatch,
+      back: this.back,
+      firstName: sel ? sel.first : '',
+      tableNumber: sel ? sel.table : '',
+      meal: sel ? sel.meal : '',
+      dietary: sel ? sel.dietary : '',
+      hasDietary: !!(sel && sel.dietary),
+      roundTables, rectTables,
+      rootStyle: `position:relative;width:100%;min-height:100vh;background:${v.bg};font-family:'Jost',sans-serif;--sc-faint:${v.faint};overflow:hidden;`,
+      logoStyle: 'width:158px;height:auto;filter:drop-shadow(0 6px 20px rgba(0,0,0,.18));',
+      inputStyle: `width:100%;padding:16px 20px;border-radius:14px;border:1px solid ${v.inputBorder};background:${v.inputBg};color:${v.ink};font-family:'Jost',sans-serif;font-size:16px;letter-spacing:.02em;text-align:center;`,
+      suggestBoxStyle: `position:absolute;top:calc(100% + 10px);left:0;right:0;background:${v.suggestBg};border:1px solid ${v.suggestBorder};border-radius:14px;overflow:hidden;box-shadow:0 18px 40px rgba(0,0,0,.22);z-index:5;text-align:left;`,
+      mapCardStyle: `width:100%;max-width:362px;margin-top:28px;background:${v.mapBg};border:1px solid ${v.mapBorder};border-radius:18px;padding:16px 14px 14px;box-shadow:0 14px 36px rgba(0,0,0,.18);`,
+      planInkAttr: v.planInk,
+      backStyle: `margin-top:8px;background:transparent;border:1px solid ${v.backBorder};color:${v.gold};font-family:'Jost',sans-serif;font-size:12px;letter-spacing:.16em;text-transform:uppercase;padding:13px 26px;border-radius:30px;cursor:pointer;`,
+      dietaryStyle: `font-family:'Jost',sans-serif;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:${v.dietInk};background:${v.dietBg};padding:5px 13px;border-radius:20px;margin-top:2px;`
+    };
+  }
+}
+</script>
+</body>
+</html>
