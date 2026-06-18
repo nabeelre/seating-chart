@@ -353,7 +353,7 @@ var STATIC_GEO = [
 
         row.appendChild(name);
         row.appendChild(tbl);
-        row.addEventListener("click", function () { selectGuest(g); });
+        bindRowSelect(row, g);
         suggestBox.appendChild(row);
       });
       suggestBox.hidden = false;
@@ -365,6 +365,22 @@ var STATIC_GEO = [
       suggestBox.hidden = true;
       suggestBox.innerHTML = "";
     }
+  }
+
+  // Select a suggestion. On iOS, tapping a row collapses the keyboard and
+  // reflows the page, which moves the row out from under the finger and makes
+  // Safari cancel the synthesized "click" — so handle "touchend" directly and
+  // suppress the duplicate click, while keeping "click" for desktop/mouse.
+  function bindRowSelect(row, g) {
+    var moved = false;
+    row.addEventListener("touchstart", function () { moved = false; }, { passive: true });
+    row.addEventListener("touchmove", function () { moved = true; }, { passive: true });
+    row.addEventListener("touchend", function (e) {
+      if (moved) return;          // a scroll, not a tap
+      e.preventDefault();         // stop the synthesized click that follows
+      selectGuest(g);
+    });
+    row.addEventListener("click", function () { selectGuest(g); });
   }
 
   input.addEventListener("input", renderSuggestions);
