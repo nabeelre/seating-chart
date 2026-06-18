@@ -517,7 +517,12 @@ var STATIC_GEO = [
     firstNameEl.textContent = g.first;
     tableNumberEl.textContent = g.table;
     // Placeholder until real dietary data is populated in data.js.
-    dietaryNoteEl.textContent = g.dietary ? g.dietary : "No dietary restrictions on file";
+    if (g.dietary === "Vegetarian") {
+      dietaryNoteEl.textContent =
+        "You will be served an individually plated vegetarian entree in place of the shared meat entrees.";
+    } else {
+      dietaryNoteEl.textContent = g.dietary ? g.dietary : "No dietary restrictions on file";
+    }
     drawFloorplan(g.table);
 
     input.value = "";
